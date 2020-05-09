@@ -8,19 +8,6 @@ public enum PlayerType { None, X, O, Tie }
 public class MiniMax : MonoBehaviour
 {
     public int gridSize = 3;
-    //public Grid grid;
-
-    //public ReturnAlphaBeta GetMax(Grid grid)
-    //{
-    //    this.grid = grid;
-    //    return Max();
-    //}
-
-    //public ReturnAlphaBeta GetMin(Grid grid)
-    //{
-    //    this.grid = grid;
-    //    return Min();
-    //}
 
     public ReturnAlphaBeta GetMax(Grid grid, int alpha, int beta)
     {
@@ -44,8 +31,6 @@ public class MiniMax : MonoBehaviour
             {
                 if (grid.Get(i,j) == PlayerType.None)
                 {
-                    Debug.Log($"Verificando coordenada {i} {j}");
-                    Debug.Break();
                     grid.lines[i].itens[j].value = PlayerType.O;
                     var alphaValue = GetMin(grid, alpha, beta);
                     if (alphaValue.value > maxValue)
@@ -91,8 +76,7 @@ public class MiniMax : MonoBehaviour
             {
                 if (grid.Get(i,j) == PlayerType.None)
                 {
-                    Debug.Break();
-                    grid.lines[i].itens[j].value = PlayerType.O;
+                    grid.lines[i].itens[j].value = PlayerType.X;
                     var alphaValue = GetMax(grid, alpha, beta);
                     if (alphaValue.value < minValue)
                     {
