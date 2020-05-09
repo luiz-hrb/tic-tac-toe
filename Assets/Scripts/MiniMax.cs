@@ -61,7 +61,6 @@ public class MiniMax : MonoBehaviour
 
         var result = IsEnd(grid);
 
-
         if (result == PlayerType.X)
             return new ReturnAlphaBeta(-1, Vector2.zero);
         if (result == PlayerType.O)

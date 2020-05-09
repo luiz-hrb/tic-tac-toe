@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
@@ -101,7 +100,10 @@ public class GameManager : MonoBehaviour
     private void EndGame(PlayerType result)
     {
         divFinal.SetActive(true);
-        finalText.text = $"Player {result} won!";
+        if (result == PlayerType.Tie)
+            finalText.text = $"It's a tie";
+        else
+            finalText.text = $"Player {result} won!";
         playerTurn = PlayerType.None;
     }
 }
