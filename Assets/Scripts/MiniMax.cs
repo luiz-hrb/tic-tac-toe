@@ -8,23 +8,69 @@ public enum PlayerType { None, X, O, Tie }
 public class MiniMax : MonoBehaviour
 {
     public int gridSize = 3;
-    public Grid grid;
+    //public Grid grid;
 
-    public ReturnAlphaBeta GetMax(Grid grid)
+    //public ReturnAlphaBeta GetMax(Grid grid)
+    //{
+    //    this.grid = grid;
+    //    return Max();
+    //}
+
+    //public ReturnAlphaBeta GetMin(Grid grid)
+    //{
+    //    this.grid = grid;
+    //    return Min();
+    //}
+
+    public ReturnAlphaBeta GetMax(Grid grid, int alpha, int beta)
     {
-        this.grid = grid;
-        return Max();
+        int maxValue = -2;
+
+        Vector2 position = Vector2.zero;
+
+        var result = IsEnd(grid);
+
+        if (result == PlayerType.X)
+            return new ReturnAlphaBeta(-1, Vector2.zero);
+        if (result == PlayerType.O)
+            return new ReturnAlphaBeta(1, Vector2.zero);
+        if (result == PlayerType.Tie)
+            return new ReturnAlphaBeta(0, Vector2.zero);
+
+
+        for (int i = 0; i < gridSize; i++)
+        {
+            for (int j = 0; j < gridSize; j++)
+            {
+                if (grid.Get(i,j) == PlayerType.None)
+                {
+                    Debug.Log($"Verificando coordenada {i} {j}");
+                    Debug.Break();
+                    grid.lines[i].itens[j].value = PlayerType.O;
+                    var alphaValue = GetMin(grid, alpha, beta);
+                    if (alphaValue.value > maxValue)
+                    {
+                        maxValue = alphaValue.value;
+                        position.x = i;
+                        position.y = j;
+                    }
+                    grid.lines[i].itens[j].value = PlayerType.None;
+
+
+                    if (maxValue >= beta)
+                        return new ReturnAlphaBeta(maxValue, position);
+
+                    if (maxValue > alpha)
+                        alpha = maxValue;
+                }
+            }
+        }
+        return new ReturnAlphaBeta(maxValue, position);
     }
 
-    public ReturnAlphaBeta GetMin(Grid grid)
+    public ReturnAlphaBeta GetMin(Grid grid, int alpha, int beta)
     {
-        this.grid = grid;
-        return Min();
-    }
-
-    private ReturnAlphaBeta Max()
-    {
-        int alpha = int.MinValue;
+        int minValue = 2;
 
         Vector2 position = Vector2.zero;
 
@@ -45,57 +91,27 @@ public class MiniMax : MonoBehaviour
             {
                 if (grid.Get(i,j) == PlayerType.None)
                 {
+                    Debug.Break();
                     grid.lines[i].itens[j].value = PlayerType.O;
-                    var alphaValue = Min();
-                    if (alphaValue.value > alpha)
+                    var alphaValue = GetMax(grid, alpha, beta);
+                    if (alphaValue.value < minValue)
                     {
-                        alpha = alphaValue.value;
-                        position.x = alphaValue.position.x;
-                        position.x = alphaValue.position.y;
+                        minValue = alphaValue.value;
+                        position.x = i;
+                        position.y = j;
                     }
                     grid.lines[i].itens[j].value = PlayerType.None;
+
+
+                    if (minValue <= alpha)
+                        return new ReturnAlphaBeta(minValue, position);
+
+                    if (minValue < beta)
+                        beta = minValue;
                 }
             }
         }
-        return new ReturnAlphaBeta(alpha, position);
-    }
-
-    private ReturnAlphaBeta Min()
-    {
-        int beta = int.MaxValue;
-
-        Vector2 position = Vector2.zero;
-
-        var result = IsEnd(grid);
-
-
-        if (result == PlayerType.X)
-            return new ReturnAlphaBeta(-1, Vector2.zero);
-        if (result == PlayerType.O)
-            return new ReturnAlphaBeta(1, Vector2.zero);
-        if (result == PlayerType.Tie)
-            return new ReturnAlphaBeta(0, Vector2.zero);
-
-
-        for (int i = 0; i < gridSize; i++)
-        {
-            for (int j = 0; j < gridSize; j++)
-            {
-                if (grid.Get(i,j) == PlayerType.None)
-                {
-                    grid.lines[i].itens[j].value = PlayerType.O;
-                    var alphaValue = Max();
-                    if (alphaValue.value < beta)
-                    {
-                        beta = alphaValue.value;
-                        position.x = alphaValue.position.x;
-                        position.x = alphaValue.position.y;
-                    }
-                    grid.lines[i].itens[j].value = PlayerType.None;
-                }
-            }
-        }
-        return new ReturnAlphaBeta(beta, position);
+        return new ReturnAlphaBeta(minValue, position);
     }
 
     public PlayerType IsEnd(Grid grid)

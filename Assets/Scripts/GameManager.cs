@@ -57,10 +57,11 @@ public class GameManager : MonoBehaviour
     {
         if (!IsEnd())
         {
-            Vector2 position = minimax.GetMax(grid).position;
+            Vector2 position = minimax.GetMax(grid, -2, 2).position;
             SetTileValue(position, PlayerType.O);
             playerTurn = PlayerType.X;
         }
+        IsEnd();
     }
 
    private Tile GetTile(Vector2 position)
